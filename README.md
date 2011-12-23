@@ -13,11 +13,11 @@ Usage
 4. Run your app and go through every activity. Every time you create a new activity, the Android OS will unload the previous activity and trigger its `onSaveInstanceState` event. Every time you close an activity (rather than open a new activity on top of it), the Android OS will reload the activity immediately below the current activity in the activity stack and trigger its `onRestoreInstanceState` event.
 5. To test the activities at the topmost level in your app's activity stack, you will need to have another external activity pop on top of them, so their `onSaveInstanceState` will trigger. The best way to do this is by launching a new app through ADB, as shown below.
 
-       #### Get shell access via ADB
-       adb shell
+    #### Get shell access via ADB
+    adb shell
 
-       #### Start the calculator application on the device
-       am start -n com.android.calculator2/com.android.calculator2.Calculator
+    #### Start the calculator application on the device
+    am start -n com.android.calculator2/com.android.calculator2.Calculator
 
 6. Once you are done testing your app, you can return to the SetAlwaysFinish app and uncheck the `Always Finish` checkbox to allow Android to optimize for speed once again.
 
