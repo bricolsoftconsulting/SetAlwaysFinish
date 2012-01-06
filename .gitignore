@@ -7,3 +7,5 @@ gen/*
 desktop.ini
 
 local.properties
+out/
+*.iws
