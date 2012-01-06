@@ -5,3 +5,5 @@ Android/.settings/org.eclipse.jdt.core.prefs
 bin/*
 gen/*
 desktop.ini
+
+local.properties
