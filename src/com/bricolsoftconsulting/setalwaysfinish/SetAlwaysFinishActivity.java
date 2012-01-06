@@ -27,106 +27,93 @@ import android.provider.Settings;
 import android.view.View;
 import android.widget.CheckBox;
 
-public class SetAlwaysFinishActivity extends Activity
-{
-	/*
-	 *  Members
-	 */
-	private CheckBox mAlwaysFinishCB;
-	private boolean mAlwaysFinish;
-	
-	/*
-	 * Updates the system Always Finish setting
-	 */
-	private void writeFinishOptions()
-	{
-		try
-		{
-			// Due to restrictions related to hidden APIs, need to emulate the line below 
-			// using reflection:
-			// ActivityManagerNative.getDefault().setAlwaysFinish(mAlwaysFinish);
-			final Class<?>   classActivityManagerNative = Class.forName("android.app.ActivityManagerNative");
-			final Method     methodGetDefault = classActivityManagerNative.getMethod("getDefault");
-			final Method     methodSetAlwaysFinish = classActivityManagerNative.getMethod("setAlwaysFinish", new Class[] {boolean.class});
-			final Object     objectInstance = methodGetDefault.invoke(null);
-			methodSetAlwaysFinish.invoke(objectInstance, new Object[]{mAlwaysFinish});
-		}
-		catch (Exception ex)
-		{
-			showAlert("Could not set always finish:\n\n" + ex, "Error");
-		}
-	}
+public class SetAlwaysFinishActivity extends Activity {
+    /*
+      *  Members
+      */
+    private CheckBox mAlwaysFinishCB;
+    private boolean mAlwaysFinish;
 
-	/*
-	 * Gets the latest AlwaysFinish value from the system and 
-	 * updates the checkbox
-	 */
-	private void updateFinishOptions()
-	{
-		mAlwaysFinish = Settings.System.getInt(getContentResolver(), Settings.System.ALWAYS_FINISH_ACTIVITIES, 0) != 0;
-		mAlwaysFinishCB.setChecked(mAlwaysFinish);
-	}
-	
     /*
-     * onClick handler for the AlwaysFinish checkbox 
-     */
-	private View.OnClickListener mAlwaysFinishClicked =
-        new View.OnClickListener() {
-			public void onClick(View v)
-	    {
-	        mAlwaysFinish = ((CheckBox)v).isChecked();
-	        writeFinishOptions();
-	        updateFinishOptions();
-	    }
-	};
-	
+      * Updates the system Always Finish setting
+      */
+    private void writeFinishOptions() {
+        try {
+            // Due to restrictions related to hidden APIs, need to emulate the line below
+            // using reflection:
+            // ActivityManagerNative.getDefault().setAlwaysFinish(mAlwaysFinish);
+            final Class<?> classActivityManagerNative = Class.forName("android.app.ActivityManagerNative");
+            final Method methodGetDefault = classActivityManagerNative.getMethod("getDefault");
+            final Method methodSetAlwaysFinish = classActivityManagerNative.getMethod("setAlwaysFinish", new Class[]{boolean.class});
+            final Object objectInstance = methodGetDefault.invoke(null);
+            methodSetAlwaysFinish.invoke(objectInstance, new Object[]{mAlwaysFinish});
+        } catch (Exception ex) {
+            showAlert("Could not set always finish:\n\n" + ex, "Error");
+        }
+    }
+
     /*
-     * * Called when the activity is first created.
-     */
+      * Gets the latest AlwaysFinish value from the system and
+      * updates the checkbox
+      */
+    private void updateFinishOptions() {
+        mAlwaysFinish = Settings.System.getInt(getContentResolver(), Settings.System.ALWAYS_FINISH_ACTIVITIES, 0) != 0;
+        mAlwaysFinishCB.setChecked(mAlwaysFinish);
+    }
+
+    /*
+    * onClick handler for the AlwaysFinish checkbox
+    */
+    private View.OnClickListener mAlwaysFinishClicked =
+            new View.OnClickListener() {
+                public void onClick(View v) {
+                    mAlwaysFinish = ((CheckBox) v).isChecked();
+                    writeFinishOptions();
+                    updateFinishOptions();
+                }
+            };
+
+    /*
+    * * Called when the activity is first created.
+    */
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-    	// Call base implementation
+    public void onCreate(Bundle savedInstanceState) {
+        // Call base implementation
         super.onCreate(savedInstanceState);
-        
+
         // Set the content view
         setContentView(R.layout.main);
-        
+
         // Initialize checkbox
-        mAlwaysFinishCB = (CheckBox)findViewById(R.id.always_finish);
+        mAlwaysFinishCB = (CheckBox) findViewById(R.id.always_finish);
         mAlwaysFinishCB.setOnClickListener(mAlwaysFinishClicked);
     }
 
     /*
      * * Called when the activity resumes.
      */
-	@Override
-	protected void onResume()
-	{
-		super.onResume();
-		updateFinishOptions();
-	}
-	
-	/*
-	 * Displays an alert messagebox
-	 */
-	private void showAlert(String message, String title)
-	{
-		if (!isFinishing())
-		{
-			AlertDialog.Builder builder = new AlertDialog.Builder(SetAlwaysFinishActivity.this);
-			builder.setMessage(message);
-			builder.setCancelable(true);
-			builder.setTitle(title);
-			builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
-			{
-				public void onClick(DialogInterface dialog, int id)
-				{
-					
-				}
-			});
-			AlertDialog alert = builder.create();
-			alert.show();
-		}
-	}
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateFinishOptions();
+    }
+
+    /*
+      * Displays an alert messagebox
+      */
+    private void showAlert(String message, String title) {
+        if (!isFinishing()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(SetAlwaysFinishActivity.this);
+            builder.setMessage(message);
+            builder.setCancelable(true);
+            builder.setTitle(title);
+            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+
+                }
+            });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+    }
 }
