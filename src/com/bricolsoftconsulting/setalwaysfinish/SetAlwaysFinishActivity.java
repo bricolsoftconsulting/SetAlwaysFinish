@@ -22,12 +22,24 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.Toast;
 
 public class SetAlwaysFinishActivity extends Activity {
+    private static final String LOG_TAG = "SetAlwaysFinishActivity";
+
+    /*
+     * Intent constants
+     */
+    public static final String ACTION_SET = "com.bricolsoftconsulting.setalwaysfinish.ACTION_SET";
+    public static final String EXTRA_ALWAYSFINISH = "com.bricolsoftconsulting.setalwaysfinish.EXTRA_ALWAYSFINISH";
+    public static final String EXTRA_NOTIFY = "com.bricolsoftconsulting.setalwaysfinish.EXTRA_NOTIFY";
+
     /*
       *  Members
       */
@@ -51,6 +63,34 @@ public class SetAlwaysFinishActivity extends Activity {
             showAlert("Could not set always finish:\n\n" + ex, "Error");
         }
     }
+    
+    private void writeFinishOptionsForIntent(final Intent intent) {
+        final Bundle extras = intent.getExtras();
+        
+        // Extras are required
+        if (extras == null) {
+            Log.e(LOG_TAG, "Extras required for intent with action " + intent.getAction());
+            return;
+        }
+        
+        // ALWAYSFINISH extra key is required
+        if (!extras.containsKey(EXTRA_ALWAYSFINISH)) {
+            Log.e(LOG_TAG, "Extra [" + EXTRA_ALWAYSFINISH + "] required for intent with action " + intent.getAction());
+            return;
+        }
+        
+        this.mAlwaysFinish = extras.getBoolean(EXTRA_ALWAYSFINISH);
+        writeFinishOptions();
+        
+        // Optional extra key to Toast the result
+        if (extras.containsKey(EXTRA_NOTIFY)) {
+            if (extras.getBoolean(EXTRA_NOTIFY)) {
+                updateFinishOptions();
+                final String message = "Settings.System.ALWAYS_FINISH_ACTIVITIES = " + String.valueOf(mAlwaysFinish);
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     /*
       * Gets the latest AlwaysFinish value from the system and
@@ -58,7 +98,9 @@ public class SetAlwaysFinishActivity extends Activity {
       */
     private void updateFinishOptions() {
         mAlwaysFinish = Settings.System.getInt(getContentResolver(), Settings.System.ALWAYS_FINISH_ACTIVITIES, 0) != 0;
-        mAlwaysFinishCB.setChecked(mAlwaysFinish);
+        if (mAlwaysFinishCB != null) {
+            mAlwaysFinishCB.setChecked(mAlwaysFinish);
+        }
     }
 
     /*
@@ -80,6 +122,12 @@ public class SetAlwaysFinishActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         // Call base implementation
         super.onCreate(savedInstanceState);
+        
+        final Intent intent = getIntent();
+        if (ACTION_SET.equals(intent.getAction())) {
+            writeFinishOptionsForIntent(intent);
+            finish();
+        }
 
         // Set the content view
         setContentView(R.layout.main);

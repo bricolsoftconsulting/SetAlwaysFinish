@@ -21,6 +21,15 @@ Usage
 
 6. Once you are done testing your app, you can return to the SetAlwaysFinish app and uncheck the `Always Finish` checkbox to allow Android to optimize for speed once again.
 
+Advanced Usage
+--------------
+Use the ADB shell command to launch SetAlwaysFinish, attempt to change the setting, and optionally notify the result
+    $ adb shell 'am start -n "com.bricolsoftconsulting.setalwaysfinish/com.bricolsoftconsulting.setalwaysfinish.SetAlwaysFinishActivity" \
+      -a "com.bricolsoftconsulting.setalwaysfinish.ACTION_SET" \
+      --ez "com.bricolsoftconsulting.setalwaysfinish.EXTRA_ALWAYSFINISH" false \
+      --ez "com.bricolsoftconsulting.setalwaysfinish.EXTRA_NOTIFY" true'
+
+
 Copyright
 ---------
 Copyright 2011 Bricolsoft Consulting
