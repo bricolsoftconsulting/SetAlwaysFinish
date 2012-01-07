@@ -24,11 +24,17 @@ Usage
 Advanced Usage
 --------------
 Use the ADB shell command to launch SetAlwaysFinish, attempt to change the setting, and optionally notify the result
-    $ adb shell 'am start -n "com.bricolsoftconsulting.setalwaysfinish/com.bricolsoftconsulting.setalwaysfinish.SetAlwaysFinishActivity" \
-      -a "com.bricolsoftconsulting.setalwaysfinish.ACTION_SET" \
-      --ez "com.bricolsoftconsulting.setalwaysfinish.EXTRA_ALWAYSFINISH" false \
-      --ez "com.bricolsoftconsulting.setalwaysfinish.EXTRA_NOTIFY" true'
 
+    $ adb shell 'am start -n "com.bricolsoftconsulting.setalwaysfinish/com.bricolsoftconsulting.setalwaysfinish.SetAlwaysFinishActivity" \
+     -a "com.bricolsoftconsulting.setalwaysfinish.ACTION_SET" \
+     --ez "com.bricolsoftconsulting.setalwaysfinish.EXTRA_ALWAYSFINISH" false \
+     --ez "com.bricolsoftconsulting.setalwaysfinish.EXTRA_NOTIFY" true'
+
+Uri Usage
+---------
+Use an Intent with the scheme `setalwaysfinish://`:
+
+    $ adb shell 'am start -d "setalwaysfinish://?alwaysfinish=true&notify=true"'
 
 Copyright
 ---------

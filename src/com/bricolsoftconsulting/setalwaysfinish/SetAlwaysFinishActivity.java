@@ -23,6 +23,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -64,6 +65,24 @@ public class SetAlwaysFinishActivity extends Activity {
         }
     }
     
+    private void writeFinishOptionsForUri(final Uri uri) {
+
+        // Require "alwaysfinish=[true|false]"
+        final String alwayFinishParam = uri.getQueryParameter("alwaysfinish");
+        if (alwayFinishParam == null) {
+            Log.e(LOG_TAG, "Query parameter \"alwaysfinish\"=[true|false] required intent with data scheme " + uri.getScheme());
+            return;
+        }
+        this.mAlwaysFinish = Boolean.parseBoolean(alwayFinishParam);
+        writeFinishOptions();
+
+        // Optionally notify
+        final String notifyParam = uri.getQueryParameter("notify");
+        if (notifyParam != null && Boolean.parseBoolean(notifyParam)) {
+            notifyFinishOptions();
+        }
+    }
+    
     private void writeFinishOptionsForIntent(final Intent intent) {
         final Bundle extras = intent.getExtras();
         
@@ -85,11 +104,15 @@ public class SetAlwaysFinishActivity extends Activity {
         // Optional extra key to Toast the result
         if (extras.containsKey(EXTRA_NOTIFY)) {
             if (extras.getBoolean(EXTRA_NOTIFY)) {
-                updateFinishOptions();
-                final String message = "Settings.System.ALWAYS_FINISH_ACTIVITIES = " + String.valueOf(mAlwaysFinish);
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+                notifyFinishOptions();
             }
         }
+    }
+
+    private void notifyFinishOptions() {
+        updateFinishOptions();
+        final String message = "Settings.System.ALWAYS_FINISH_ACTIVITIES = " + String.valueOf(mAlwaysFinish);
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     /*
@@ -123,9 +146,7 @@ public class SetAlwaysFinishActivity extends Activity {
         // Call base implementation
         super.onCreate(savedInstanceState);
         
-        final Intent intent = getIntent();
-        if (ACTION_SET.equals(intent.getAction())) {
-            writeFinishOptionsForIntent(intent);
+        if (useSilentIntent(getIntent())) {
             finish();
         }
 
@@ -137,9 +158,31 @@ public class SetAlwaysFinishActivity extends Activity {
         mAlwaysFinishCB.setOnClickListener(mAlwaysFinishClicked);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if (useSilentIntent(intent)) {
+            finish();
+        }
+    }
+    
+    private boolean useSilentIntent(Intent intent) {
+        final Uri data = intent.getData();
+        if (data != null) {
+            writeFinishOptionsForUri(data);
+            return true;
+        }
+        else if (ACTION_SET.equals(intent.getAction())) {
+            writeFinishOptionsForIntent(intent);
+            return true;
+        }
+        return false;
+    }
+
     /*
-     * * Called when the activity resumes.
-     */
+    * * Called when the activity resumes.
+    */
     @Override
     protected void onResume() {
         super.onResume();
