@@ -36,6 +36,12 @@ Use an Intent with the scheme `setalwaysfinish://`:
 
     $ adb shell 'am start -d "setalwaysfinish://?alwaysfinish=true&notify=true"'
 
+Credits
+-------
+Original version based on source code from the DevTools app in the Android emulator.
+
+Thanks to Rob Wilis (ohhorob) for his significant contributions to making this tool easily usable with automated testing.
+
 Copyright
 ---------
 Copyright 2011 Bricolsoft Consulting
